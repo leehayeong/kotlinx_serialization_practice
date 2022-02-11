@@ -73,6 +73,14 @@ class MainActivity : AppCompatActivity() {
          *           Employee(no=2, name=John)]
          *  )
          */
+
+        // Json Option 1. pretty Json
+        val prettyJson = Json { prettyPrint = true }
+        val deptPrettyJson = prettyJson.encodeToString(dept)
+        Log.d(TAG, deptPrettyJson)
+
+        val deptFromPrettyJson = prettyJson.decodeFromString<Dept2>(deptPrettyJson)
+        Log.d(TAG, deptFromPrettyJson.toString())
     }
 
     companion object {
