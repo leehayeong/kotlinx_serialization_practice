@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         makeDeptToJson()
         makeJsonToDept()
         makeDept2Json()
+        makeDeptIgnoreJson()
     }
 
     private fun makeDeptToJson() {
@@ -81,6 +82,13 @@ class MainActivity : AppCompatActivity() {
 
         val deptFromPrettyJson = prettyJson.decodeFromString<Dept2>(deptPrettyJson)
         Log.d(TAG, deptFromPrettyJson.toString())
+    }
+
+    private fun makeDeptIgnoreJson() {
+        val json = Json { ignoreUnknownKeys = true }
+        val deptJson = """ {"no":"1","name":"Marketing","location":"USA/Seattle","nickName":"Wow!!!"} """
+        val deptFromJson = json.decodeFromString<Dept>(deptJson)
+        Log.d(TAG, deptFromJson.toString()) // ept(no=1, name=Marketing, location=USA/Seattle)
     }
 
     companion object {
