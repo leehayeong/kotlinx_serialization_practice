@@ -21,6 +21,8 @@ class MainActivity : AppCompatActivity() {
         makeJsonToDept()
         makeDept2Json()
         makeDeptIgnoreJson()
+        makeCoerceJson()
+        makeEncodeDefaultJson()
     }
 
     private fun makeDeptToJson() {
@@ -89,6 +91,36 @@ class MainActivity : AppCompatActivity() {
         val deptJson = """ {"no":"1","name":"Marketing","location":"USA/Seattle","nickName":"Wow!!!"} """
         val deptFromJson = json.decodeFromString<Dept>(deptJson)
         Log.d(TAG, deptFromJson.toString()) // ept(no=1, name=Marketing, location=USA/Seattle)
+    }
+
+    /**
+     * Coercing input values (decoding: json -> data class)
+     * 강력한 type check 를 느슨하게 조정 (default 값 할당)
+     * - non null property 에 null 이 입력될 경우
+     * - enum 값을 담는 property 에 정해지지 않은 enum 이 들어오는 경우
+     */
+    private fun makeCoerceJson() {
+        val json = Json { coerceInputValues = true }
+        val deptJson = """ {"no":"1","name":"Marketing","location":null} """
+        val deptFromJson = json.decodeFromString<Dept>(deptJson)
+        Log.d(TAG, deptFromJson.toString())
+        // default 값이 model 에 지정되어 있어야 null 이 들어와도 default 값으로 들어감
+        // D/MainActivity: Dept(no=1, name=Marketing, location=default)
+        // ** coerceInputValues 옵션이 설정되어있지 않으면? 에러남
+    }
+
+    /**
+     * Encoding defaults (encoding: data class -> json)
+     * 값이 설정되지 않도라도 data class 의 default 값이 json 에 기본값으로 출력되도록 하기 위해 사용
+     */
+    private fun makeEncodeDefaultJson() {
+        val json = Json { encodeDefaults = true }
+        val dept = Dept(no = 1, name = "Marketing")
+        val deptFromJson = json.encodeToString(dept)
+        Log.d(TAG, deptFromJson)
+        // Dept 는 no, name 만 선언하고 이상태로 json 으로 encoding 하면 data class 의 location default 값이 나옴
+        // D/MainActivity: {"no":1,"name":"Marketing","location":"default"}
+        // ** encodeDefaults 옵션이 설정되어있지 않으면? 값이 없는 property 는 json 에 포함되지 않음 -> D/MainActivity: {"no":1,"name":"Marketing"}
     }
 
     companion object {

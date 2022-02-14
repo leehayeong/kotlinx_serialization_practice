@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Dept(
     val no: Int,
     val name: String,
-    val location: String
+    val location: String = "default"
 )
 
 @Serializable
