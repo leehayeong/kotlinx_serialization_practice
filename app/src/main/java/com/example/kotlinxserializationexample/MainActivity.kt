@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
         makeDeptIgnoreJson()
         makeCoerceJson()
         makeEncodeDefaultJson()
+        makeLenientJson()
     }
 
     private fun makeDeptToJson() {
@@ -121,6 +122,20 @@ class MainActivity : AppCompatActivity() {
         // Dept 는 no, name 만 선언하고 이상태로 json 으로 encoding 하면 data class 의 location default 값이 나옴
         // D/MainActivity: {"no":1,"name":"Marketing","location":"default"}
         // ** encodeDefaults 옵션이 설정되어있지 않으면? 값이 없는 property 는 json 에 포함되지 않음 -> D/MainActivity: {"no":1,"name":"Marketing"}
+    }
+
+    /**
+     * isLenient
+     * 따옴표 형식들에 대한 체크를 느슨하게 해 줌
+     */
+    private fun makeLenientJson() {
+        val json = Json { isLenient = true }
+        val deptJson = """ {no:1, name:Marketing, location:USA/Seattle} """
+        val deptFromJson = json.decodeFromString<Dept>(deptJson)
+        Log.d(TAG, deptFromJson.toString())
+        // json 이 "key":"value" 처럼 "" 가 생략되더라도 에러나지 않도록 함.
+        // D/MainActivity: Dept(no=1, name=Marketing, location=USA/Seattle)
+        // 옵션이 없었다면 deptJson 은 에러가 나게 됨.
     }
 
     companion object {
